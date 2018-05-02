@@ -1,7 +1,7 @@
 plugins {
     id 'java'
+    id 'maven'
     id 'jacoco'
-    id 'me.tatarka.retrolambda' version '3.2.5'
     id 'com.github.kt3k.coveralls' version '2.6.3'
 }
 
@@ -22,13 +22,19 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-all:1.3'
 }
 
-retrolambda {
-    jdk System.getenv('JAVA8_HOME')
-    oldJdk System.getenv('JAVA7_HOME')
-    javaVersion JavaVersion.VERSION_1_7
-    jvmArgs '-noverify'
-    defaultMethods false
-    incremental true
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
 
 jacocoTestReport {
